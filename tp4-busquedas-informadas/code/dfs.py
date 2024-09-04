@@ -4,8 +4,8 @@ import frozenLake as e
 import time
 import bfs as b
 
-def dfs_limited(env):
-    nombre = "DFS Limited"
+def dfs(env):
+    nombre = "DFS"
     start_time = time.time()
     # Crear el nodo inicial
     nodo = n.Nodo(env.initial_state, None)
@@ -20,8 +20,6 @@ def dfs_limited(env):
     # Diccionario para almacenar los estados explorados
     explored = set()
     
-    # Contador para movimientos hacia abajo
-    down_moves_count = 0
     
     while frontier:
         # Extraer el nodo de la frontera
@@ -35,21 +33,6 @@ def dfs_limited(env):
         for action in actions:
             action_cost = action_number.popleft()
             child = n.Nodo(action, node, action_cost)
-            
-            # Verificar si el movimiento es hacia abajo (action_number = 1)
-            if action_cost == 1:
-                down_moves_count += 1
-            else:
-                down_moves_count = 0
-            
-            # Si se han hecho 10 movimientos hacia abajo, retornar
-            if down_moves_count >= 10:
-                end_time = time.time()
-                final_time = end_time - start_time
-                path, moves = b.solution(node)
-                first_cost, second_cost = b.calculate_costs(moves)
-                return path, moves, len(explored), first_cost, second_cost, final_time, False, nombre
-            
             if child.estado not in explored and child.estado not in (n.estado for n in frontier):
                 if child.goal_test(env.final_state):
                     explored_amount = len(explored)
@@ -57,20 +40,18 @@ def dfs_limited(env):
                     end_time = time.time()
                     final_time = end_time-start_time
                     first_cost, second_cost = b.calculate_costs(moves)
-                    if len(moves) <= 1000: found = True 
-                    else: found = False
-                    return path, moves, explored_amount, first_cost, second_cost, final_time, found, nombre
+                    return path, moves, explored_amount, first_cost, second_cost, final_time, True, nombre
                 
                 frontier.appendleft(child)
 
     end_time = time.time()
     final_time = end_time-start_time                     
-    path, moves = b.solution(node)     
-    first_cost, second_cost = b.calculate_costs(moves)             
-    return path, moves, len(explored), first_cost, second_cost, final_time, False, nombre
+    path, moves = b.solution(node)    
+    first_cost, second_cost = b.calculate_costs(moves)              
+    return path, moves, explored_amount, first_cost, second_cost, final_time, False, nombre
 
-env = e.Environment(100, 0.8)
-result = dfs_limited(env)
+env = e.Environment(100, 0.08)
+result = dfs(env)
 
 path, moves, explored_amount, first_cost, second_cost, final_time, found, nombre = result
 info = {
@@ -84,5 +65,15 @@ info = {
     }
 print(info)
 
+"""
 if found:
     b.showMoves(moves, env)
+"""
+
+
+
+
+
+
+
+
