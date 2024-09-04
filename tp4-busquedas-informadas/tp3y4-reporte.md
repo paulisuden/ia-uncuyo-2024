@@ -65,20 +65,20 @@ El agente aleatorio elige la acción a realizar al azar, siempre y cuando no hay
 
  A continuación, se presentan los resultados en gráficos de cajas y bigotes:
 
- ![Costo escenario 1:](https://github.com/paulisuden/ia-uncuyo-2024/blob/main/tp3-busquedas-no-informadas/images/Costo%20total%201_boxplot.png)
+ ![Costo escenario 1:](https://github.com/paulisuden/ia-uncuyo-2024/blob/main/tp4-busquedas-informadas/images/Costo%20total%201_boxplot.png)
 
  En este gráfico, el costo 1 se refiere a la cantidad de movimientos que se realizó hasta llegar al objetivo. Podemos ver que, tanto el DFS como el DFS Limited, son los que más acciones toman hasta encontrar el objetivo. Y, por otro lado, tanto el BFS, UCS y A* toman menor cantidad de pasos hasta llegar al objetivo
  
- ![Costo escenario 2:](https://github.com/paulisuden/ia-uncuyo-2024/blob/main/tp3-busquedas-no-informadas/images/Costo%20total%202_boxplot.png)
+ ![Costo escenario 2:](https://github.com/paulisuden/ia-uncuyo-2024/blob/main/tp4-busquedas-informadas/images/Costo%20total%202_boxplot.png)
 
  Este grafico, es similar al anterior, solo que al costo se le suma el número que representa la acción tomada (0 mueve a la izquierda, 1 mueve hacia abajo, 2 mueve a la derecha y 3 mueve hacia arriba). Se puede ver que los resultados son parecidos y el que varía sólo un poco es el agente aleatorio.
 
-![Estados explorados:](https://github.com/paulisuden/ia-uncuyo-2024/blob/main/tp3-busquedas-no-informadas/images/Estados%20explorados_boxplot.png)
+![Estados explorados:](https://github.com/paulisuden/ia-uncuyo-2024/blob/main/tp4-busquedas-informadas/images/Estados%20explorados_boxplot.png)
 
 Podemos ver que tanto el DFS como el DFS Limited son los que menos estados exploraron, a pesar de que sus costos fueron los más altos anteriormente. Por otra parte, el BFS fue quien más estados exploró a quien le sigue el UCS y el A*
 
 
-![Tiempo:](https://github.com/paulisuden/ia-uncuyo-2024/blob/main/tp3-busquedas-no-informadas/images/Tiempo%20empleado_boxplot.png)
+![Tiempo:](https://github.com/paulisuden/ia-uncuyo-2024/blob/main/tp4-busquedas-informadas/images/Tiempo%20empleado_boxplot.png)
 
 Finalmente, podemos ver que en relación al tiempo, los algoritmos A* y UCS son los más eficientes, y tanto DFS como DFS Limited los que mayor tiempo tardan.
 
