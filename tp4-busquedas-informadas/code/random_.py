@@ -40,7 +40,9 @@ def randomm(env):
                     path, moves = solution(child)
                     end_time = time.time()
                     final_time = end_time-start_time
-                    return path, moves, explored_amount, first_cost, second_cost, final_time, True, nombre
+                    if len(moves) <= 1000: found = True 
+                    else: found = False
+                    return path, moves, explored_amount, first_cost, second_cost, final_time, found, nombre
             node = child
         if move > 2000:
             stop = True

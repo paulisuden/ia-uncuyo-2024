@@ -57,7 +57,9 @@ def dfs_limited(env):
                     end_time = time.time()
                     final_time = end_time-start_time
                     first_cost, second_cost = b.calculate_costs(moves)
-                    return path, moves, explored_amount, first_cost, second_cost, final_time, True, nombre
+                    if len(moves) <= 1000: found = True 
+                    else: found = False
+                    return path, moves, explored_amount, first_cost, second_cost, final_time, found, nombre
                 
                 frontier.appendleft(child)
 
