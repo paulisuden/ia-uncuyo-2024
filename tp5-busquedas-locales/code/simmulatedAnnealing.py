@@ -46,5 +46,3 @@ def simulated_annealing(board):
 print("ataque:", ataque)
 print("Número de estados evaluados:", states_evaluated)
 print("Tiempo empleado:", time)"""
-
-#! T = 584

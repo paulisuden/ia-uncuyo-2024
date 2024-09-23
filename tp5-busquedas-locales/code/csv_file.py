@@ -3,7 +3,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def save_csv(results, name):
+import csv
+
+def save_csv(results_4, results_8, results_10, name):
     # Definir los encabezados del archivo CSV
     headers = ["algorithm_name", "reinas", "solución óptima", "tiempo ejecución", "iteraciones"]
 
@@ -12,13 +14,17 @@ def save_csv(results, name):
         writer = csv.writer(f)
         writer.writerow(headers)
 
+    # Combinar los resultados de las tres listas
+    combined_results = results_4 + results_8 + results_10
+
     # Escribir los datos en el archivo CSV
     with open(name, "a", newline='') as f:
         writer = csv.writer(f)
         # Convertir cada diccionario en una lista de valores en el orden de los encabezados
-        writer.writerows([[result[header] for header in headers] for result in results])
+        writer.writerows([[result[header] for header in headers] for result in combined_results])
 
     print("Archivo ", name, "creado con éxito.")
+
 
 
 
