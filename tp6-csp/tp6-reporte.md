@@ -189,14 +189,14 @@ Este resultado es suficiente porque, en un CSP, el objetivo es encontrar una asi
 
 ### **Gráficos de caja y bigotes:**
 
-[Tiempos BACKTRACKING]!(https://github.com/paulisuden/ia-uncuyo-2024/blob/main/tp6-csp/images/Tiempos%20de%20ejecuci%C3%B3n%20BACKTRACKING_boxplot.png)
+![Tiempos BACKTRACKING](https://github.com/paulisuden/ia-uncuyo-2024/blob/main/tp6-csp/images/Tiempos%20de%20ejecuci%C3%B3n%20BACKTRACKING_boxplot.png)
 
-[Tiempos FORWARD CHECKING]!(https://github.com/paulisuden/ia-uncuyo-2024/blob/main/tp6-csp/images/Tiempos%20de%20ejecuci%C3%B3n%20FORWARD%20CHECKING_boxplot.png)
+![Tiempos FORWARD CHECKING](https://github.com/paulisuden/ia-uncuyo-2024/blob/main/tp6-csp/images/Tiempos%20de%20ejecuci%C3%B3n%20FORWARD%20CHECKING_boxplot.png)
 
-[Tiempos HILL CLIMBING]!(https://github.com/paulisuden/ia-uncuyo-2024/blob/main/tp6-csp/images/Tiempos%20de%20ejecuci%C3%B3n%20hill%20climbing_boxplot.png)
+![Tiempos HILL CLIMBING](https://github.com/paulisuden/ia-uncuyo-2024/blob/main/tp6-csp/images/Tiempos%20de%20ejecuci%C3%B3n%20hill%20climbing_boxplot.png)
 
-[Tiempos SIMMULATED ANNEALING]!(https://github.com/paulisuden/ia-uncuyo-2024/blob/main/tp6-csp/images/Tiempos%20de%20ejecuci%C3%B3n%20simmulating_boxplot.png)
+![Tiempos SIMMULATED ANNEALING](https://github.com/paulisuden/ia-uncuyo-2024/blob/main/tp6-csp/images/Tiempos%20de%20ejecuci%C3%B3n%20simmulating_boxplot.png)
 
-[Tiempos GENETIC]!(https://github.com/paulisuden/ia-uncuyo-2024/blob/main/tp6-csp/images/Tiempos%20alg.%20gen%C3%A9tico_boxplot.png)
+![Tiempos GENETIC](https://github.com/paulisuden/ia-uncuyo-2024/blob/main/tp6-csp/images/Tiempos%20alg.%20gen%C3%A9tico_boxplot.png)
 
 Podemos ver que los tiempos de ejecución de Forward Checking son menores a los de Backtracking, y este ultimo tiene tiempos de ejecución similares a los algoritmos de Simmulated Annealing y Hill Climbing, mientras que el algortitmo Genético sigue siendo el que más tiempo toma.
