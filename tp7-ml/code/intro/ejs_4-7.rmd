@@ -1,0 +1,228 @@
+library(rpart)
+library(readr)
+
+train_data <- read.csv("TP7A/data/arbolado-mendoza-dataset-circ_tronco_cm-train.csv")
+validation_data <- read.csv("TP7A/data/arbolado-mendoza-dataset-validation.csv")
+
+
+# 4
+
+# a. Función para agregar una nueva columna con valores aleatorios entre 0 y 1
+
+generate_random_prediction_prob <- function(data) { 
+  data$prediction_prob <- runif(nrow(data)) 
+  return(data) 
+}
+
+# Llama a la función y proporciona el data.frame como argumento
+
+train_data <- generate_random_prediction_prob(train_data)
+
+
+# b. Define la función random_classifier
+# Genera la columna prediction_class basada en la columna prediction_prob
+random_classifier <- function(data) {
+  data$prediction_class <- ifelse(data$prediction_prob > 0.5, 1, 0)
+  return(data)
+}
+
+
+# Llama a la función
+validation_data <- generate_random_prediction_prob(validation_data)
+
+
+# c. Aplica la función random_classifier al data.frame de validación
+validation_data <- random_classifier(validation_data)
+
+# Ver el data.frame resultante con la nueva columna prediction_class
+head(validation_data)
+
+
+#d.
+calculate_confusion_matrix <- function(actual, predicted) {
+  TP <- sum(actual == 1 & predicted == 1)
+  TN <- sum(actual == 0 & predicted == 0)
+  FP <- sum(actual == 0 & predicted == 1)
+  FN <- sum(actual == 1 & predicted == 0)
+  
+  confusion_matrix <- data.frame(TP = TP, TN = TN, FP = FP, FN = FN)
+  
+  return(confusion_matrix)
+}
+
+# Utilizar la función para calcular la matriz de confusión
+confusion_matrix <- calculate_confusion_matrix(validation_data$inclinacion_peligrosa, validation_data$prediction_class)
+
+# Ver la matriz de confusión
+View(confusion_matrix)
+
+
+# 5
+# a. Definir la función biggerclass_classifier
+# Calcular la clase mayoritaria
+biggerclass_classifier <- function(data) {
+  majority_class <- ifelse(sum(data$inclinacion_peligrosa == 1) > sum(data$inclinacion_peligrosa == 0), 1, 0)
+  data$prediction_class <- majority_class
+  return(data)
+}
+
+# b. Aplicar la función biggerclass_classifier al data.frame validation_data
+validation_data <- biggerclass_classifier(validation_data)
+
+# Utilizar la función para calcular la matriz de confusión
+confusion_matrix <- calculate_confusion_matrix(validation_data$inclinacion_peligrosa, validation_data$prediction_class)
+
+# Ver la matriz de confusión
+View(confusion_matrix)
+
+
+# 6
+# Función para calcular Accuracy
+calculate_accuracy <- function(conf_matrix) {
+  accuracy <- (conf_matrix$TP + conf_matrix$TN) / (conf_matrix$TP + conf_matrix$TN + conf_matrix$FP + conf_matrix$FN)
+  return(accuracy)
+}
+
+# Función para calcular Precision
+calculate_precision <- function(conf_matrix) {
+  precision <- conf_matrix$TP / (conf_matrix$TP + conf_matrix$FP)
+  return(precision)
+  }
+  
+
+# Función para calcular Sensitivity
+calculate_sensitivity <- function(conf_matrix) {
+  denominator <- conf_matrix$TP + conf_matrix$FN
+  if (denominator == 0) { return(NA) }
+  sensitivity <- conf_matrix$TP / denominator
+  return(sensitivity)
+}
+
+
+# Función para calcular Specificity
+calculate_specificity <- function(conf_matrix) {
+  denominator <- conf_matrix$TN + conf_matrix$FP
+  if (denominator == 0) { return(NA) }
+  specificity <- conf_matrix$TN / denominator
+  return(specificity)
+}
+
+# Función para calcular Negative Predicted Value
+calculate_negative_predicted <- function(conf_matrix) {
+  denominator <- conf_matrix$TN + conf_matrix$FN
+  if (denominator == 0) { return(NA) }
+  negative_predicted <- conf_matrix$TN / denominator
+  return(negative_predicted)
+}
+
+#METRICAS
+
+accuracy_value <- calculate_accuracy(confusion_matrix)
+cat("Accuracy:", accuracy_value, "\n")
+precision_value <- calculate_precision(confusion_matrix)
+cat("Precision:", precision_value, "\n")
+sensitivity_value <- calculate_sensitivity(confusion_matrix)
+cat("Sensitivity:", sensitivity_value, "\n")
+specificity_value <- calculate_specificity(confusion_matrix)
+cat("Specificity:", specificity_value, "\n")
+negative_predicted_value <- calculate_negative_predicted(confusion_matrix)
+cat("Negative Predicted Value:", negative_predicted_value, "\n")
+
+
+# 7
+# a. Definir la función create_folds
+create_folds <- function(df, k) {
+  shuffled_data = df[sample(1:nrow(df)), ] 
+  
+  # Calculate the number of rows in each fold
+  fold_size <- nrow(shuffled_data) %/% k
+  fold_sizes <- rep(fold_size, k)
+  
+  # Distribute the remaining rows if any
+  remaining_rows <- nrow(shuffled_data) %% k
+  fold_sizes[1:remaining_rows] <- fold_sizes[1:remaining_rows] + 1
+  
+  # Split the shuffled dataframe into k folds
+  folds <- split(shuffled_data, rep(1:k, fold_sizes))
+  
+  # Convert the folds to a list
+  fold_list <- as.list(folds)
+  
+  return(fold_list)
+}
+
+# b. Definir la función cross_validation
+
+cross_validation <- function(df, k) {
+  # Crear los pliegues de datos
+  folded_data <- create_folds(df, k)
+  # Inicializar el dataframe para almacenar las métricas
+  result <- data.frame(
+    Accuracy = numeric(),
+    Precision = numeric(),
+    Sensitivity = numeric(),
+    Specificity = numeric()
+  )
+  
+  for (i in seq_along(folded_data)) {
+    # Definir conjunto de validación y conjuntos de entrenamiento
+    validation_set <- folded_data[[i]]
+    trainings_sets <- folded_data[-i]
+    # Combinar los conjuntos de entrenamiento
+    training_df <- do.call(rbind, trainings_sets)
+    # Asegúrate de que las variables sean las correctas y estén en el dataframe
+    train_formula <- as.formula(inclinacion_peligrosa ~ altura + diametro_tronco)
+    # Entrenar el modelo
+    tree_model <- rpart(train_formula, data = training_df)
+    # Realizar predicciones
+    p <- predict(tree_model, validation_set, type = "class")
+    # Obtener etiquetas verdaderas
+    true_labels <- validation_set$inclinacion_peligrosa
+    #Calcular la matriz de confusión
+    confusion_matrix <- calculate_confusion_matrix(true_labels, p)
+    # Calcular métricas
+    accuracy <- calculate_accuracy(confusion_matrix)
+    precision <- calculate_precision(confusion_matrix)
+    sensitivity <- calculate_sensitivity(confusion_matrix)
+    specificity <- calculate_specificity(confusion_matrix)
+    # Almacenar métricas en un dataframe
+    row_metrics <- data.frame(
+      Accuracy = accuracy,
+      Precision = precision,
+      Sensitivity = sensitivity,
+      Specificity = specificity
+    )
+    # Añadir las métricas al dataframe result
+    result <- rbind(result, row_metrics)
+  }
+  
+  # Imprimir y devolver el resultado
+  print(result)
+  return(result)
+}
+
+validation_data$inclinacion_peligrosa = as.factor(validation_data$inclinacion_peligrosa)
+
+result_df <- cross_validation(validation_data, 10)
+result_df
+
+readr::write_csv(result_df, "./metrics.csv")
+data2 <- read.csv("./metrics.csv", header = TRUE)
+means <- colMeans(data2, na.rm = TRUE)
+
+# Calcular la desviación estándar de cada columna
+std_dev <- apply(data2, 2, sd, na.rm = TRUE)
+
+# Crear un nuevo dataframe con las medias y desviaciones estándar
+summary_data <- data.frame(
+  Metrica = c("Accuracy", "Precision", "Sensitivity", "Specificity"),
+  Media = means,
+  Desviacion_Estandar = std_dev
+)
+
+summary_data
+write.csv(summary_data, "resultados.csv", row.names = FALSE)
+
+
+
+
