@@ -1,0 +1,108 @@
+#Manipulación de datos (filter)
+library(dplyr)       
+#Visualización de datos
+library(ggplot2)     
+#Implementar Random Forest
+library(randomForest)
+#Cálculo y visualización del AUC-ROC
+library(pROC)        
+#Funciones para preprocesamiento y evaluación (downSample)
+library(caret)       
+
+
+# Cargar los datasets
+train_data <- read.csv("TP7A/data/arbolado-mendoza-dataset-train.csv")
+test_data <- read.csv("TP7A/data/arbolado-mendoza-dataset-validation.csv")
+
+#Muestra la estructura del data frame (columnas y tipos de datos)
+str(train_data)
+#Muestra un resumen estadístico básico de cada columna.
+summary(train_data)
+
+# inclinacion_peligrosa debe ser un factor para que el modelo la trate como una clasificación binaria.
+train_data$inclinacion_peligrosa <- as.factor(train_data$inclinacion_peligrosa)
+
+
+###Manejo del desbalanceo de clases
+cat("¿Clases desbalanceadas?\n")
+table(train_data$inclinacion_peligrosa)
+
+
+# Verificar proporción de la clase minoritaria
+class_counts <- table(train_data$inclinacion_peligrosa)
+class_proportion <- min(class_counts) / sum(class_counts)
+
+# Si la proporción es menor al 20%, aplicamos undersampling
+if (class_proportion < 0.2) {
+  cat("Clases desbalanceadas, aplicando downsampling...\n")
+  set.seed(123)
+  train_balanced <- downSample(
+    x = train_data %>% select(-inclinacion_peligrosa),
+    y = train_data$inclinacion_peligrosa
+  )
+} else {
+  cat("Clases balanceadas, no se aplica downsampling.\n")
+  train_balanced <- train_data
+}
+
+# Confirmamos la cantidad de clases después del balanceo (si se aplicó)
+table(train_balanced$Class)
+
+
+
+###Entrenar el modelo random forest
+
+
+#se crean 500 árboles en el bosque aleatorio.
+#se consideran 3 variables al dividir en cada nodo del árbol.
+#se calcula la importancia de las variables predictoras.
+
+set.seed(123)
+model_rf <- randomForest(Class ~ ., data = train_balanced, 
+                         ntree = 500, mtry = 3, importance = TRUE)
+                         
+
+###Evaluación inicial del modelo
+
+#muestra las estadísticas generales
+print(model_rf)
+#muestra la importancia de las variables
+importance(model_rf)  
+
+
+
+
+###Evaluacion con AUC-ROC
+
+
+# # Predecir probabilidades para cada clase en los datos originales
+#type = "prob" devuelve las probabilidades para cada clase
+pred_prob <- predict(model_rf, train_data, type = "prob")[,2] 
+
+# Calcular el AUC-ROC
+
+#roc() calcula la curva ROC a partir de las probabilidades predichas.
+#auc() calcula el área bajo la curva que mide la capacidad del modelo para distinguir entre las dos clases.
+roc_curve <- roc(train_data$inclinacion_peligrosa, pred_prob)
+auc_value <- auc(roc_curve)
+cat("AUC-ROC:", auc_value, "\n")
+
+# Graficar la curva ROC
+plot(roc_curve, col = "blue", main = "Curva ROC - Random Forest")
+
+
+###Prediccion en el conjunto de prueba:
+
+
+#type = "response" devuelve la clase predicha (0 o 1) para cada observación.
+test_pred <- predict(model_rf, test_data, type = "response")
+
+# Generar archivo de envío
+submission <- data.frame(
+  ID = test_data$id,
+  inclinacion_peligrosa = as.integer(as.character(test_pred))
+)
+
+# Guardar el archivo en formato CSV
+write.csv(submission, "submission.csv", row.names = FALSE)
+
