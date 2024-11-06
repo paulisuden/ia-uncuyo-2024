@@ -40,10 +40,11 @@ Recopilación y conformación de métricas para su posterior graficación \[2 d�
 Elaboración del informe \[6 días\]  
 Elaboración de la presentación \[2 días\]  
 
-### Cronograma estimado de actividades (gantt):
-![Gantt](gantt.png)
+**Cronograma estimado de actividades (gantt):**   
+ ![](https://github.com/paulisuden/ia-uncuyo-2024/blob/main/proyecto_final/images/Imagen%20de%20WhatsApp%202024-11-04%20a%20las%2012.54.53_84bcd94e.jpg)
+ 
+Referencias.
 
-### Referencias.
 
 1. [https://stable-baselines3.readthedocs.io/en/master/](https://stable-baselines3.readthedocs.io/en/master/)  
 2. [https://ai.berkeley.edu/project\_overview.html](https://ai.berkeley.edu/project_overview.html)  
